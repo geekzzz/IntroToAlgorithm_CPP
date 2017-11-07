@@ -1,11 +1,3 @@
-//
-//  main.cpp
-//  Insert_sort
-//
-//  Created by 张海童 on 2017/10/30.
-//  Copyright © 2017年 张海童. All rights reserved.
-//
-
 #include <iostream>
 #include <vector>
 
