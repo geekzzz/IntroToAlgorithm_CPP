@@ -1,5 +1,5 @@
 // msd(最高位优先)方法实现基数排序
-
+// 注意：msd radix sort方法使用递归实现排序
 #include <iostream>
 #include <vector>
 #include <limits.h>
