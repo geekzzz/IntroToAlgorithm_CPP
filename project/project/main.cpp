@@ -1,4 +1,4 @@
-// 找最大值（n次比较）、找最小值（n次比较）、同时找出最大最小值（3 * floor（n/2）次比较）
+// 最低位优先（lsd）方法实现基数排序
 //
 #include <iostream>
 #include <vector>
@@ -8,81 +8,68 @@
 using namespace std;
 
 
-int find_max(vector<int> a)
+#define   MAXSIZE   10000
+
+int getdigit(int x,int d)
 {
-    int max = a[0];
-    for(auto i = 1;i<a.size();i++ )
-    {
-        if(max < a[i])
-        {
-            max = a[i];
-        }
-    }
-    return max;
+    int a[] = {1, 1, 10, 100};   //最大三位数，所以这里只要百位就满足了。
+    return (x/a[d]) % 10;
 }
-
-int find_min(vector<int> a)
+void  PrintArr(int ar[],int n)
 {
-    int min = a[0];
-    for(auto i = 1;i<a.size();i++ )
+    for(int i = 0;i < n; ++i)
     {
-        if(min > a[i])
-        {
-            min = a[i];
-        }
+        cout<<ar[i]<<" ";
     }
-    return min;
+    cout<<endl;
 }
-
-
-vector<int> find_min_and_max(vector<int> a)    //3*floor(n/2) 时间同时找出最大最小值
+void lsdradix_sort(int arr[],int begin,int end,int d)
 {
-    vector<int> tmp(2,0);//tmp[0]存储min，tmp[1]存储max
-    int i = 0;
-    if(a.size()%2 == 0)
+    const int radix = 10;
+    int count[radix], i, j;
+    
+    int *bucket = (int*)malloc((end-begin+1)*sizeof(int));
+    
+    //按照分配标准依次进行排序过程
+    for(int k = 1; k <= d; ++k)
     {
-        i = 2;//遍历数组循环偏移设为2
-        if(a[0] > a[1])
+        for(i = 0; i < radix; i++)
         {
-            tmp[0] = a[1];
-            tmp[1] = a[0];
+            count[i] = 0;
         }
-        else
+        //统计各个桶中所盛数据个数
+        for(i = begin; i <= end; i++)
         {
-            tmp[0] = a[0];
-            tmp[1] = a[1];
+            count[getdigit(arr[i], k)]++;
+        }
+        //count[i]表示第i个桶的右边界索引
+        for(i = 1; i < radix; i++)
+        {
+            count[i] = count[i] + count[i-1];
+        }
+        //把数据依次装入桶(注意装入时候的分配技巧)
+        for(i = end;i >= begin; --i)        //这里要从右向左扫描，保证排序稳定性
+        {
+            j = getdigit(arr[i], k);        //求出关键码的第k位的数字， 例如：576的第3位是5
+            bucket[count[j]-1] = arr[i]; //放入对应的桶中，count[j]-1是第j个桶的右边界索引
+            --count[j];               //对应桶的装入数据索引减一
         }
         
-    }
-    else
-    {
-        i = 1;//遍历数组循环偏移设为1
-        tmp[0] = tmp[1] = a[0];
-    }
-    int max = a[0],min = a[0];
-    for(auto j = i;j < a.size();j += 2)
-    {
-        int tmax,tmin;
-        if(a[j] > a[j+1])
+        //注意：此时count[i]为第i个桶左边界
+        
+        //从各个桶中收集数据
+        for(i = begin,j = 0; i <= end; ++i, ++j)
         {
-            tmax = a[j];
-            tmin = a[j+1];
+            arr[i] = bucket[j];
         }
-        else
-        {
-            tmax = a[j+1];
-            tmin = a[j];
-        }
-        tmp[0] = tmp[0] < tmin ? tmp[0] : tmin;
-        tmp[1] = tmp[1] > tmax ? tmp[1] : tmax;
     }
-    return tmp;
+    free(bucket);
 }
 
-int  main(int argc ,const char *argv[])
+int  main(int argc,const char *argv[])
 {
-    vector<int> a {1,2,3,4,5,6,7,100,10,24,45,18,56,53,13,2424,454,-1,-100};
-    vector<int> b = find_min_and_max(a);
-    cout << b[0] << ":" << b[1] <<endl;
+    int  br[10] = {20, 80, 90, 589, 998, 965, 852, 123, 456, 789};
+    PrintArr(br,10);
+    lsdradix_sort(br, 0, 9, 3);
+    PrintArr(br, 10);
 }
-
