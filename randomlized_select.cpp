@@ -10,7 +10,7 @@
 using namespace std;
 
 //#define random(x) (rand()%x)
-
+int partition(int a[],int p,int r);
 
 int Random(int low ,int high)     //产生[low,high] 区间的随机数
 {
@@ -23,6 +23,12 @@ int Random(int low ,int high)     //产生[low,high] 区间的随机数
     srand((unsigned)time(NULL));
     int r = rand()%(high - low) + low;
     return r;
+}
+int randomized_partition(int a[],int p, int r)
+{
+    int i = Random(p, r);
+    swap(a[r],a[i]);
+    return partition(a, p, r);
 }
 
 int partition(int a[],int p,int r) //运用快排思想，返回的整数q将数组分割为两部分，前半部分都小于a[q],后面的都大于a[q]
@@ -47,10 +53,10 @@ int randomized_select(int a[],int p,int r,int i)//a 数组，p，r  数组中的
     {
         return a[p];
     }
-    int q = Random(p,r);
-    swap(a[r],a[q]);
-    int t = partition(a, p, r);
-    int k = q- p +1;
+    //int q = Random(p,r);
+    //swap(a[r],a[q]);
+    int q = partition(a, p, r);
+    int k = q - p +1;
     if(i == k)
     {
         return a[q];
@@ -74,6 +80,6 @@ int  main(int argc,const char *argv[])
     {
         aa.push_back(br[i]);
     }
-    int a = randomized_select(br, 1, 9, 4);
+    int a = randomized_select(br, 1, 9, 1);
     cout << a<< endl;
 }
