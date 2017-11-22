@@ -1,4 +1,4 @@
-//  期望为线性时间的选择算法  从数组中选择第i小的元素
+//根据CLRS中算法编写,简单的数组实现队列
 //
 #include <iostream>
 #include <vector>
@@ -9,77 +9,88 @@
 #include <stdlib.h>
 using namespace std;
 
-//#define random(x) (rand()%x)
-int partition(int a[],int p,int r);
+#define queue_max_size 1000
 
-int Random(int low ,int high)     //产生[low,high] 区间的随机数
+class queue
 {
-    /*
-     (rand()%(up-low+1)) + low - 1    (low,up)
-     (rand()%(up-low)) + low       [low,up)
-     (rand()%(up-low))+ low + 1      (low,up]
-     (rand()%(up-low+1)) + low      [low,up]
-     */
-    srand((unsigned)time(NULL));
-    int r = rand()%(high - low) + low;
-    return r;
-}
-int randomized_partition(int a[],int p, int r)
-{
-    int i = Random(p, r);
-    swap(a[r],a[i]);
-    return partition(a, p, r);
-}
+public:
+    bool queue_empty();
+    bool enqueues(int x);
+    int dequeue();
+    int head = 0;  //head指向队列头
+    int tail = 0;  //tail指向队尾
+    int queue[queue_max_size];
+};
 
-int partition(int a[],int p,int r) //运用快排思想，返回的整数q将数组分割为两部分，前半部分都小于a[q],后面的都大于a[q]
+bool queue::queue_empty()
 {
-    int x = a[r];
-    int i = p - 1;
-    for(auto j = p;j < r;++j)
+    if(head == tail)
     {
-        if(a[j] <= x)
-        {
-            i++;
-            swap(a[i],a[j]);
-        }
-    }
-    swap(a[i+1],a[r]);
-    return i+1;
-}
-
-int randomized_select(int a[],int p,int r,int i)//a 数组，p，r  数组中的区间[p,r],i 随机选择的第i小的元素
-{
-    if(p == r)
-    {
-        return a[p];
-    }
-    //int q = Random(p,r);
-    //swap(a[r],a[q]);
-    int q = partition(a, p, r);
-    int k = q - p +1;
-    if(i == k)
-    {
-        return a[q];
-    }
-    else if(i < k)
-    {
-        return randomized_select(a, p, q-1, i);
+        return true;
     }
     else
     {
-        return randomized_select(a, q+1, r, k);
+        return false;
     }
 }
 
+bool queue::enqueues(int x)
+{
+    if(head == tail +1)
+    {
+        cout << "overflow  上溢出" << endl;
+        return false;
+    }
+    else
+    {
+        queue[tail] = x;
+        if(tail == queue_max_size - 1)
+        {
+            tail = 0;
+        }
+        else
+        {
+            tail += 1;
+        }
+        return true;
+    }
+}
+
+int queue::dequeue()
+{
+    if(queue_empty())
+    {
+        cout << "overflow 下溢出" << endl;
+        return 0;
+    }
+    else
+    {
+        int x = queue[head];
+        if(head == queue_max_size - 1)
+        {
+            head = 0;
+        }
+        else
+        {
+            head += 1;
+        }
+        return x;
+    }
+    
+}
 
 int  main(int argc,const char *argv[])
 {
-    int  br[10] = {78,17,39,26,72,94,21,12,23,68};
-    vector<float> aa;
-    for(auto i = 0;i < 10;i++)
-    {
-        aa.push_back(br[i]);
-    }
-    int a = randomized_select(br, 1, 9, 1);
-    cout << a<< endl;
+    queue q;
+    bool e = q.queue_empty();
+    cout << e << endl;
+    q.enqueues(100);
+    e= q.queue_empty();
+    q.enqueues(1000);
+    int x = q.dequeue();
+    cout << q.queue_empty() << endl;
+    cout << x << endl;
+    x = q.dequeue();
+    cout << x << endl;
+    cout <<q.queue_empty() << endl;
 }
