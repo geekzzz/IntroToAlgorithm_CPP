@@ -1,4 +1,4 @@
-//双向链表的简单实现，根据clrs
+//带哨兵的双向链表的简单实现，根据clrs
 //
 #include <iostream>
 #include <vector>
@@ -12,17 +12,8 @@ struct Head;
 struct Double_list;
 struct Node;
 
-class L
-{
-public:
-    L(Node *head = NULL) : head(head) {}
-    
-    void list_insert(Node *x);
-    Node *list_search(int k);
-    void list_delete(Node *x);
-    
-    Node  *head = NULL;
-};
+class Node;
+class L;
 
 class Node
 {
@@ -32,14 +23,32 @@ public:
     
     Node *pre ,*next;
     int n ;
-    
 };
+
+
+class L
+{
+public:
+    L()                          //一定要注意在同一个cpp文件中class的放置顺序，若class Node放在class L的后面，则此处编译会出问题
+    {
+        nil = new Node();      //一定要new 一个Node 否则会出错
+        nil->pre = nil;       //一定要初始化nil的pre和next指向自己
+        nil->next = nil;
+    }
+    void list_insert(Node *x);
+    Node *list_search(int k);
+    void list_delete(Node *x);
+    
+    Node  *nil ;
+};
+
+
 
 Node *L::list_search(int k)
 {
     Node *x = NULL;
-    x = head;
-    while(x != NULL && x->n != k)
+    x = nil->next;
+    while(x != nil && x->n != k)
     {
         x = x->next;
     }
@@ -49,28 +58,26 @@ Node *L::list_search(int k)
 
 void L::list_insert(Node *x)
 {
-    x->next = head;
-    if(head != NULL)
+    /*
+    if(nil->next == NULL)
     {
-        head->pre = x;
+        nil->next = nil;
     }
-    head = x;
+    if(nil->pre == NULL)
+    {
+        nil->pre = nil;
+    }
+     */
+    x->next = nil->next;
+    nil->next->pre = x;
+    nil->next = x;
+    x->pre = nil;
 }
 
 void L::list_delete(Node *x)
 {
-    if(x->pre != NULL)
-    {
-        x->pre->next = x->next;
-    }
-    else
-    {
-        head = x->next;
-    }
-    if(x->next != NULL)
-    {
-        x->next->pre = x->pre;
-    }
+    x->pre->next = x->next;
+    x->next->pre = x->pre;
 }
 
 int  main(int argc,const char *argv[])
