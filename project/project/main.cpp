@@ -1,5 +1,44 @@
-//带哨兵的双向链表的简单实现，根据clrs
+//直接寻址表实现，根据clrs,有问题暂时不能用
 //
+
+
+#include<iostream>
+#include<cstdio>
+#include<vector>
+
+using namespace std;
+
+int main() {    //引用的他人的，可以借鉴一下
+    
+    int num;
+    int key;
+    while (scanf("%d", &num) && num) {
+        vector<int> v[13];
+        while (num--) {
+            scanf("%d", &key);
+            int temp = key % 13;
+            v[temp].push_back(key);
+        }
+        for (int i = 0; i < 13; ++i) {
+            printf("%d%s", i, "#");
+            if (v[i].empty()) {
+                printf("NULL\n");
+            } else {
+                vector<int>::iterator it = v[i].begin();
+                for (; it != v[i].end(); ++it) {
+                    printf("%s%d", it == v[i].begin() ? "" : " ", *it);
+                }
+                printf("\n");
+            }
+        }
+    }
+    
+    return 0;
+}
+
+
+
+/*
 #include <iostream>
 #include <vector>
 #include <limits.h>
@@ -8,116 +47,106 @@
 #include <ctime>
 #include <stdlib.h>
 using namespace std;
-struct Head;
-struct Double_list;
-struct Node;
 
-class Node;
-class L;
+#define max_table_size 1000
+int m = 0;
 
-class Node
+int h(int k)
 {
-public:
-    friend class L;
-    Node(int n = 0,Node *pre = NULL,Node *next = NULL) : n(n),pre(pre),next(next){}
-    
-    Node *pre ,*next;
-    int n ;
-};
-
-
-class L
+    return k % m;
+}
+int h2(int k)
 {
-public:
-    L()                          //一定要注意在同一个cpp文件中class的放置顺序，若class Node放在class L的后面，则此处编译会出问题
-    {
-        nil = new Node();      //一定要new 一个Node 否则会出错
-        nil->pre = nil;       //一定要初始化nil的pre和next指向自己
-        nil->next = nil;
-    }
-    void list_insert(Node *x);
-    Node *list_search(int k);
-    void list_delete(Node *x);
-    
-    Node  *nil ;
-};
-
-
-
-Node *L::list_search(int k)
+    return 1 + k % (m-1);
+}
+//线性探测
+int Linear_Probing(int k, int i)
 {
-    Node *x = NULL;
-    x = nil->next;
-    while(x != nil && x->n != k)
-    {
-        x = x->next;
-    }
-    return x;
+    return (h(k) + i) % m;
+}
+//二次探测
+int Quadratic_Probint(int k, int i)
+{
+    int c1 = 1, c2 = 3;
+    return (h(k) + c1 * i + c2 * i * i) % m;
+}
+//双重探测
+int Double_Probint(int k, int i)
+{
+    return (h(k) + i * h2(k)) % m;
 }
 
 
-void L::list_insert(Node *x)
+class dirct_hash_table      //基本元素
 {
-    /*
-    if(nil->next == NULL)
+public:
+    dirct_hash_table(int a = 0,int b = 0) :key(a),element(b){};
+    int key;      //关键字
+    int element;  //记录的数据,没有使用链表实现，而直接使用了vector数据结构，简化实现
+};
+
+class hash_            //利用此class进行操作
+{
+public:
+    hash_()
     {
-        nil->next = nil;
-    }
-    if(nil->pre == NULL)
+        
+    };
+    vector<dirct_hash_table> table[max_table_size];
+    dirct_hash_table search(dirct_hash_table k);
+    void h_insert(dirct_hash_table x);
+    void h_delete(dirct_hash_table x);
+};
+
+dirct_hash_table hash_::search(dirct_hash_table k)
+{
+    vector<dirct_hash_table> t = table[k.key];
+    for(auto z = 0;z < t.size();z++)
     {
-        nil->pre = nil;
+        if(t[z].element == k.element)
+        {
+            return t[z];
+        }
     }
-     */
-    x->next = nil->next;
-    nil->next->pre = x;
-    nil->next = x;
-    x->pre = nil;
+    return t[0];
 }
 
-void L::list_delete(Node *x)
+void hash_::h_insert(dirct_hash_table x)
 {
-    x->pre->next = x->next;
-    x->next->pre = x->pre;
+    //table[x.key] = x;
+    table[x.key].push_back(x);
+}
+
+void hash_::h_delete(dirct_hash_table x)
+{
+    //table[x.key].
+    vector<dirct_hash_table> t = table[x.key];
+    for(auto z = 0;z < t.size();z++)
+    {
+        if(t[z].element == x.element)
+        {
+            t[z] = NULL;
+        }
+    }
 }
 
 int  main(int argc,const char *argv[])
 {
-    L *list  = new L();
-    for(int i = 0;i< 10;i++)
-    {
-        Node *p = new Node();
-        p->n = i;
-        list->list_insert(p);
-    }
-    /*
-    Node *p = list->head->next;
-    for(int i = 0;i < 10;i++)
-    {
-        
-        if(p != NULL)
-        {
-            cout << p->n << endl;
-            p = p->next;
-        }
-    }
-     */
-    cout << endl;
-    for(int i = 0;i< 10 ;i++)
-    {
-        Node *m = list->list_search(i);
-        cout << m->n << endl;
-    }
-    
-    list->list_delete(list->list_search(5));
-    list->list_delete(list->list_search(8));
-    cout << endl;
-    for(int i = 0;i< 10 ;i++)
-    {
-        Node *m = list->list_search(i);
-        if( m != NULL)
-        {
-            cout << m->n << endl;
-        }
-        
-    }
+    hash_ s;
+    dirct_hash_table d(10,1);
+    s.h_insert(d);
+    d.key = 100;
+    d.element = 2;
+    s.h_insert(d);
+    auto x = s.search(10);
+    cout << x.key << endl;
+    cout << x.element << endl;
+    x = s.search(100);
+    cout << x.key << endl;
+    cout << x.element << endl;
+    s.h_delete(d);
+    x = s.search(100);
+    cout << x.key << endl;
+    cout << x.element << endl;
 }
+ */
