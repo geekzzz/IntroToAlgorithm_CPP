@@ -253,7 +253,7 @@ void BiSearchTree::transplant(Node *u, Node *v)
 /*
  (1)  结点z无左右子树，则直接删除该结点，修改父节点相应指针
  (2)  结点z有左子树（右子树），则把z的左子树（右子树）接到z的父节点上
- (3)  左右子树同时存在，找到结点z的中序直接后继结点s，把结点s的数据转移到结点z，然后删除结点s，由于结点s为z的右子树总最左的结点，因而s无左子树，删除结点s可以归结到情况
+ (3)  左右子树同时存在，找到结点z的中序直接后继结点s，把结点s的数据转移到结点z，然后删除结点s，由于结点s为z的右子树总最左的结点，因而s无左子树，删除结点s可以归结到情况2
  */
 void BiSearchTree::tree_delete(Node *z)
 {
@@ -276,8 +276,8 @@ void BiSearchTree::tree_delete(Node *z)
             y->right = z->right;
             y->right->parent = y;
         }
-        transplant(y, y->left);          //将z节点替换为y节点，左子树移植的操作
-        y->left = z->left;
+        transplant(z,y);          //构建y与z父节点关系，即移植
+        y->left = z->left;       //将z节点替换为y节点，z的左子树移植的操作
         y->left->parent = y;
     }
 }

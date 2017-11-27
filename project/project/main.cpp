@@ -7,6 +7,10 @@
 #include <list>
 #include <ctime>
 #include <stdlib.h>
+
+#define black 1
+#define red 0
+
 using namespace std;
 
 class Node;
@@ -17,183 +21,85 @@ class Node
 public:
     //Node(int n = 0,Node *l = NULL,Node *r = NULL,Node *p = NULL) : n(n),left(l),right(r),parent(p) {};
     int n;
+    int color;  //红黑树，红为0，黑为1
     Node *parent;
     Node *left;
     Node *right;
 };
 
-class BiSearchTree
+class RB
 {
 public:
     //BiSearchTree() = default;
-    //BiSearchTree(Node *r) : root(r) {};
+    RB()
+    {
+        root->color = black;
+    };
     Node *root = NULL;
+    Node *nil = NULL;//哨兵节点
     
-    void inOrder_TreeWalk(Node *x); //中序遍历
-    void firstOrder_TreeWalk(Node *x);//先序遍历
-    void lastOrder_TreeWalk(Node *);//后续遍历
-    Node *tree_search(Node *x,int k);//查找值为k的节点
-    Node *iterative_tree_search(Node *x,int k);//使用while的查找
-    Node *tree_minium(Node *x);//查找树最小值
-    Node *tree_maxium(Node *x);//查找树最大值
-    Node *iterative_treeminium(Node *x);//非递归最小值
-    Node *iterative_treemaxium(Node *x);//非递归最大值
-    Node *tree_successor(Node *x);//节点的后继
-    Node *tree_predecessor(Node *x);//节点的前驱
-    void tree_insert(Node *x);  //插入节点
-    void tree_delete(Node *x);  //删除节点
-    void transplant(Node *u,Node *v); //用一颗以v为根节点的子树替换以用u为根节点的子树
+    
+    void left_rotate(Node *x);//左旋
+    void right_rotate(Node *x);//右旋
+    void rb_insert(Node *z);//插入
+    void rb_insert_fixup(Node *z);//保持插入后红黑性质
+    void transplant(Node *u,Node *v);//移植
+    Node *tree_minium(Node *x);//求最小数
+    void rb_delete(Node *z);//删除节点
+    void rb_delete_fixup(Node *x);//保持删除后红黑性质
+    
+    
 };
 
-void BiSearchTree::inOrder_TreeWalk(Node *x)
+void RB::left_rotate(Node *x)
 {
-    if(x != NULL)
-    {
-        inOrder_TreeWalk(x->left);
-        cout << x->n << ":";
-        inOrder_TreeWalk(x->right);
-    }
-}
-
-void BiSearchTree::firstOrder_TreeWalk(Node *x)
-{
-    if(x != NULL)
-    {
-        cout << x->n << ":";
-        firstOrder_TreeWalk(x->left);
-        firstOrder_TreeWalk(x->right);
-    }
-}
-
-void BiSearchTree::lastOrder_TreeWalk(Node *x)
-{
-    if(x != NULL)
-    {
-        lastOrder_TreeWalk(x->left);
-        lastOrder_TreeWalk(x->right);
-        cout << x->n << ":";
-    }
-}
-
-Node *BiSearchTree::tree_search(Node *x, int k)
-{
-    if(x == NULL ||x->n == k)
-    {
-        return x;
-    }
-    if(k < x->n)
-    {
-        return tree_search(x->left, k);
-    }
-    else
-    {
-        return tree_search(x->right, k);
-    }
-}
-
-Node *BiSearchTree::iterative_tree_search(Node *x, int k)
-{
-    while (x != NULL && x->n != k)
-    {
-        if(k < x->n)
-        {
-            x = x->left;
-        }
-        else
-        {
-            x = x->right;
-        }
-    }
-    return x;
-}
-
-Node *BiSearchTree::tree_minium(Node *x)
-{
-    if(x->left != NULL)
-    {
-        return tree_minium(x->left);
-    }
-    else
-    {
-        return x;
-    }
-}
-
-Node *BiSearchTree::tree_maxium(Node *x)
-{
-    if(x->right != NULL)
-    {
-        return tree_minium(x->right);
-    }
-    else
-    {
-        return x;
-    }
-}
-
-Node *BiSearchTree::iterative_treeminium(Node *x)
-{
-    while(x->left != NULL)
-    {
-        x = x->left;
-    }
-    return x;
-}
-
-Node *BiSearchTree::iterative_treemaxium(Node *x)
-{
-    while(x->right != NULL)
-    {
-        x = x->right;
-    }
-    return x;
-}
-
-/*
- 1.若一个节点有右子树，那么该节点的后继节点是其右子树中val值最小的节点（也就是右子树中所谓的leftMostNode）
- 2.若一个节点没有右子树，那么判断该节点和其父节点的关系
- 2.1 若该节点是其父节点的左边孩子，那么该节点的后继结点即为其父节点
- 2.2 若该节点是其父节点的右边孩子，那么需要沿着其父亲节点一直向树的顶端寻找，直到找到一个节点P，P节点是其父节点Q的左边孩子（可参考例子2的前驱结点是1），那么Q就是该节点的后继节点
- */
-Node *BiSearchTree::tree_successor(Node *x) //
-{
-    if(x->right != NULL)
-    {
-        return tree_minium(x->right);
-    }
     Node *y = new Node();
-    y = x->parent;
-    while(y != NULL && x == y->right)
+    y = x->right;
+    x->right = y->left;
+    if(y->left != nil)   //y的左节点不为nil的情况（即不为叶子节点的情况）
     {
-        x = y;
-        y = y->parent;
+        y->left->parent = x;
     }
-    return y;
+    y->parent = x->parent;
+    if(x->parent == nil)
+    {
+        root = y;
+    }
+    else if(x == x->parent->left)
+    {
+        x->parent->left = y;
+    }
+    else
+    {
+        x->parent->right = y;
+    }
 }
 
-/*
- 1.若一个节点有左子树，那么该节点的前驱节点是其左子树中val值最大的节点（也就是左子树中所谓的rightMostNode）
- 2.若一个节点没有左子树，那么判断该节点和其父节点的关系
- 2.1 若该节点是其父节点的右边孩子，那么该节点的前驱结点即为其父节点。
- 2.2 若该节点是其父节点的左边孩子，那么需要沿着其父亲节点一直向树的顶端寻找，直到找到一个节点P，P节点是其父节点Q的右边孩子（可参考例子2的前驱结点是1），那么Q就是该节点的后继节点
- */
-Node *BiSearchTree::tree_predecessor(Node *x)
+void RB::right_rotate(Node *x)
 {
-    if(x->left != NULL)
-    {
-        return tree_maxium(x->left);
-    }
     Node *y = new Node();
-    y = x->parent;
-    while(y != NULL && x == y->left)
+    y = x->left;
+    x->left = y->right;
+    if(y->right != nil)   //y的右节点不为nil的情况（即不为叶子节点的情况）
     {
-        x = y;
-        y = y->parent;
+        y->right->parent = x;
     }
-    return y;
+    y->parent = x->parent;
+    if(x->parent == nil)
+    {
+        root = y;
+    }
+    else if(x == x->parent->left)
+    {
+        x->parent->left = y;
+    }
+    else
+    {
+        x->parent->right = y;
+    }
 }
 
-void BiSearchTree::tree_insert(Node *z)
+void RB::rb_insert(Node *z)
 {
     Node *zz = new Node();  //！！！！！！！！注意要重新分配空间，不能直接用*z，否则会使用*z指向的地址数据，修改之前已经修改的数据
     zz->n = z->n;
@@ -202,8 +108,7 @@ void BiSearchTree::tree_insert(Node *z)
     z->parent = NULL;
     Node *y = NULL;
     Node *x = root;
-    //cout << root;
-    while(x != NULL)
+    while(x != nil)
     {
         y = x;
         if(zz->n < x->n)
@@ -216,7 +121,7 @@ void BiSearchTree::tree_insert(Node *z)
         }
     }
     zz->parent = y;
-    if(y == NULL)
+    if(y == nil)
     {
         root = zz;       //y为null，即树为空，z设为根节点
     }
@@ -228,11 +133,121 @@ void BiSearchTree::tree_insert(Node *z)
     {
         y->right = zz;
     }
+    zz->left = nil;
+    zz->right = nil;
+    zz->color = red;
 }
 
-void BiSearchTree::transplant(Node *u, Node *v)
+void RB::rb_insert_fixup(Node *z)
 {
-    if(u->parent == NULL)
+    while(z->parent->color == red)
+    {
+        if(z->parent == z->parent->parent->left)//将z的父节点是祖父节点的左孩子还是右节点分类讨论
+        {
+            Node *y = new Node();
+            y = z->parent->parent->right;//y指向z的叔节点
+            if(y->color == red)     //若y的颜色为红，即z的叔节点为红，即区分情况1
+            {
+                z->parent->color = black;   //z的父节点颜色设为黑
+                y->color = black;     //z的叔节点设为黑
+                z->parent->parent->color = red;//祖父节点设为红
+                z = z->parent->parent; //z改变指向，指向z的祖父节点
+            }
+            else
+            {
+                //叔结点为黑色
+                ///此时要根据z是其父结点的左孩子还是右孩子进行分类讨论
+                ///如果z是左孩子则可以直接可以通过染色和右旋来恢复性质
+                ///如果z是右孩子则可以先左旋来转成右孩子的情况
+                if(z == z->parent->right) //区分情况2，3，即在z的叔节点是black的情况下，区分z是右孩子还是左孩子
+                {
+                    z = z->parent;//是右孩子的情况，进行左旋,变为左孩子情况
+                    left_rotate(z);
+                }
+                z->parent->color = black;//重新染色，右旋得到合法的树
+                z->parent->parent->color = red;
+                right_rotate(z->parent->parent);
+            }
+        }
+        else       //z的父节点是z的祖父节点的右孩子的情况，与左孩子情况对称
+        {
+            Node *y = new Node();
+            y = z->parent->parent->left;
+            if(y->color == red)
+            {
+                z->parent->color = black;
+                y->color = black;
+                z->parent->parent->color = red;
+                z = z->parent->parent;
+            }
+            else
+            {
+                if(z == z->parent->left)
+                {
+                    z = z->parent;
+                    right_rotate(z);
+                }
+                z->parent->color = black;
+                z->parent->parent->color = red;
+                left_rotate(z->parent->parent);
+            }
+        }
+    }
+    root->color = black;
+}
+///红黑树删除函数
+///类似于二叉树删除函数,不过在删除完成以后需要调用调整函数恢复性质
+///总的过程也是按z的左右儿子情况进行分类.
+///1.z只有左儿子/右儿子
+///2.z有左右儿子,要删除的结点是z的右儿子
+///3.z有左右儿子,要删除的结点不是z的右儿子
+void RB::rb_delete(Node *z)
+{
+    Node *y = new Node();
+    y = z;
+    int y_origin_color = y->color; //记录y原颜色
+    Node *x = new Node();
+    if(z->left == nil)      //只有右子树
+    {
+        x = z->right;     //直接移植，x记录z->right，最后与z比较颜色
+        transplant(z, z->right);
+    }
+    else if(z->right == nil)//只有左子树
+    {
+        x = z->left;     //直接移植
+        transplant(z, z->left);
+    }
+    else             //左右儿子都有
+    {
+        y = tree_minium(z->right);   //查找后继
+        y_origin_color = y->color;   
+        x = y->right;
+        if(y->parent == z)
+        {
+            x->parent = y;
+        }
+        else
+        {
+            transplant(y, y->right);
+            y->right = z->right;
+            y->right->parent = y;
+        }
+        transplant(z, y);
+        y->left = z->left;
+        y->left->parent = y;
+        y->color = z->color;
+    }
+    if(y_origin_color == black)
+    {
+        rb_delete_fixup(x);
+    }
+}
+
+
+
+void RB::transplant(Node *u, Node *v)//与二叉搜索树相比改变不大
+{
+    if(u->parent == nil)
     {
         root = v;
     }
@@ -250,68 +265,8 @@ void BiSearchTree::transplant(Node *u, Node *v)
     }
 }
 
-/*
- (1)  结点z无左右子树，则直接删除该结点，修改父节点相应指针
- (2)  结点z有左子树（右子树），则把z的左子树（右子树）接到z的父节点上
- (3)  左右子树同时存在，找到结点z的中序直接后继结点s，把结点s的数据转移到结点z，然后删除结点s，由于结点s为z的右子树总最左的结点，因而s无左子树，删除结点s可以归结到情况
- */
-void BiSearchTree::tree_delete(Node *z)
-{
-    if(z->left == NULL)//处理没有左孩子的情况
-    {
-        transplant(z, z->right);
-
-    }
-    else if(z->right == NULL)//处理有左孩子没有右孩子的情况
-    {
-        transplant(z, z->left);
-
-    }
-    else     //处理z有两个孩子的剩下两种情况
-    {
-        Node *y =tree_minium(z->right);//找到y，用y替换删除的z
-        if(y->parent != z)//若y->parent节点为z（即y为z的右子树），则只需要将y的左子树替换为z的左子树即可，不需要if内的操作
-        {
-            transplant(y, y->right);     //将z节点替换为y节点,右子树移植的操作
-            y->right = z->right;
-            y->right->parent = y;
-        }
-        transplant(y, y->left);          //将z节点替换为y节点，左子树移植的操作
-        y->left = z->left;
-        y->left->parent = y;
-    }
-}
 
 int  main(int argc,const char *argv[])
 {
-    BiSearchTree *tt = new BiSearchTree();
-    int a[10] = {4,1,7,9,5,8,2,3,6,10};
-    for(auto i = 0;i < 10;i++)
-    {
-        Node *z = new Node();
-        z->n = a[i];
-        tt->tree_insert(z);
-    }
-    tt->firstOrder_TreeWalk(tt->root);
-    cout << endl;
-    tt->inOrder_TreeWalk(tt->root);
-    cout << endl;
-    tt->lastOrder_TreeWalk(tt->root);
-    cout << endl;
     
-    //Node *xxx;
-    Node *xxxx = tt->tree_search(tt->root, 5);
-    cout << xxxx->n << endl;
-    
-    tt->tree_delete(tt->tree_search(tt->root, 5));
-    tt->firstOrder_TreeWalk(tt->root);
-    
-    cout << tt->tree_minium(tt->root)->n << endl;
-    /*
-    tt->tree_delete(tt->tree_search(tt->root, 1));
-    tt->firstOrder_TreeWalk(tt->root);
-    cout << endl;
-    tt->tree_delete(tt->tree_search(tt->root, 4));
-    tt->firstOrder_TreeWalk(tt->root);
-     */
 }
