@@ -1,4 +1,4 @@
-//二叉搜索树
+//自己写的二叉搜索树，根据clrs伪代码
 //
 #include <iostream>
 #include <vector>
@@ -25,12 +25,13 @@ public:
 class BiSearchTree
 {
 public:
-    BiSearchTree(Node *r) : root(r) {};
-    Node *root;
+    //BiSearchTree() = default;
+    //BiSearchTree(Node *r) : root(r) {};
+    Node *root = NULL;
     
-    Node *inOrder_TreeWalk(Node *x); //中序遍历
-    Node *firstOrder_TreeWalk(Node *x);//先序遍历
-    Node *lastOrder_TreeWalk(Node *);//后续遍历
+    void inOrder_TreeWalk(Node *x); //中序遍历
+    void firstOrder_TreeWalk(Node *x);//先序遍历
+    void lastOrder_TreeWalk(Node *);//后续遍历
     Node *tree_search(Node *x,int k);//查找值为k的节点
     Node *iterative_tree_search(Node *x,int k);//使用while的查找
     Node *tree_minium(Node *x);//查找树最小值
@@ -44,25 +45,34 @@ public:
     void transplant(Node *u,Node *v); //用一颗以v为根节点的子树替换以用u为根节点的子树
 };
 
-Node *BiSearchTree::inOrder_TreeWalk(Node *x)
+void BiSearchTree::inOrder_TreeWalk(Node *x)
 {
-    return inOrder_TreeWalk(x->left);
-    cout << x->n << endl;
-    return inOrder_TreeWalk(x->right);
+    if(x != NULL)
+    {
+        inOrder_TreeWalk(x->left);
+        cout << x->n << ":";
+        inOrder_TreeWalk(x->right);
+    }
 }
 
-Node *BiSearchTree::firstOrder_TreeWalk(Node *x)
+void BiSearchTree::firstOrder_TreeWalk(Node *x)
 {
-    cout << x->n << endl;
-    return firstOrder_TreeWalk(x->left);
-    return firstOrder_TreeWalk(x->right);
+    if(x != NULL)
+    {
+        cout << x->n << ":";
+        firstOrder_TreeWalk(x->left);
+        firstOrder_TreeWalk(x->right);
+    }
 }
 
-Node *BiSearchTree::lastOrder_TreeWalk(Node *x)
+void BiSearchTree::lastOrder_TreeWalk(Node *x)
 {
-    return lastOrder_TreeWalk(x->left);
-    return lastOrder_TreeWalk(x->right);
-    cout << x->n << endl;
+    if(x != NULL)
+    {
+        lastOrder_TreeWalk(x->left);
+        lastOrder_TreeWalk(x->right);
+        cout << x->n << ":";
+    }
 }
 
 Node *BiSearchTree::tree_search(Node *x, int k)
@@ -185,12 +195,18 @@ Node *BiSearchTree::tree_predecessor(Node *x)
 
 void BiSearchTree::tree_insert(Node *z)
 {
-    Node *y;
+    Node *zz = new Node();  //！！！！！！！！注意要重新分配空间，不能直接用*z，否则会使用*z指向的地址数据，修改之前已经修改的数据
+    zz->n = z->n;
+    z->left = NULL;
+    z->right = NULL;
+    z->parent = NULL;
+    Node *y = NULL;
     Node *x = root;
+    //cout << root;
     while(x != NULL)
     {
         y = x;
-        if(z->n < x->n)
+        if(zz->n < x->n)
         {
             x = x->left;  //x扫描y节点左右子树
         }
@@ -199,18 +215,18 @@ void BiSearchTree::tree_insert(Node *z)
             x = x->right;  //x扫描y节点左右子树
         }
     }
-    z->parent = y;
+    zz->parent = y;
     if(y == NULL)
     {
-        root = z;       //y为null，即树为空，z设为根节点
+        root = zz;       //y为null，即树为空，z设为根节点
     }
-    else if(z->n < y->n)  //否则插入左或右子树
+    else if(zz->n < y->n)  //否则插入左或右子树
     {
-        y->left = z;
+        y->left = zz;
     }
     else
     {
-        y->right = z;
+        y->right = zz;
     }
 }
 
@@ -244,28 +260,58 @@ void BiSearchTree::tree_delete(Node *z)
     if(z->left == NULL)//处理没有左孩子的情况
     {
         transplant(z, z->right);
+        
     }
     else if(z->right == NULL)//处理有左孩子没有右孩子的情况
     {
         transplant(z, z->left);
+        
     }
     else     //处理z有两个孩子的剩下两种情况
     {
-        Node *y =tree_minium(z->right);//找到
+        Node *y =tree_minium(z->right);//找到y，用y替换删除的z
         if(y->parent != z)//若y->parent节点为z（即y为z的右子树），则只需要将y的左子树替换为z的左子树即可，不需要if内的操作
         {
-            transplant(y, y->right);     //将z节点替换为y节点的右子树移植操作
+            transplant(y, y->right);     //将z节点替换为y节点,右子树移植的操作
             y->right = z->right;
             y->right->parent = y;
         }
-        transplant(y, y->left);          //将z节点替换为y节点的左子树移植操作
+        transplant(y, y->left);          //将z节点替换为y节点，左子树移植的操作
         y->left = z->left;
         y->left->parent = y;
-        
     }
 }
 
 int  main(int argc,const char *argv[])
 {
+    BiSearchTree *tt = new BiSearchTree();
+    int a[10] = {4,1,7,9,5,8,2,3,6,10};
+    for(auto i = 0;i < 10;i++)
+    {
+        Node *z = new Node();
+        z->n = a[i];
+        tt->tree_insert(z);
+    }
+    tt->firstOrder_TreeWalk(tt->root);
+    cout << endl;
+    tt->inOrder_TreeWalk(tt->root);
+    cout << endl;
+    tt->lastOrder_TreeWalk(tt->root);
+    cout << endl;
     
+    //Node *xxx;
+    Node *xxxx = tt->tree_search(tt->root, 5);
+    cout << xxxx->n << endl;
+    
+    tt->tree_delete(tt->tree_search(tt->root, 5));
+    tt->firstOrder_TreeWalk(tt->root);
+    
+    cout << tt->tree_minium(tt->root)->n << endl;
+    /*
+     tt->tree_delete(tt->tree_search(tt->root, 1));
+     tt->firstOrder_TreeWalk(tt->root);
+     cout << endl;
+     tt->tree_delete(tt->tree_search(tt->root, 4));
+     tt->firstOrder_TreeWalk(tt->root);
+     */
 }
