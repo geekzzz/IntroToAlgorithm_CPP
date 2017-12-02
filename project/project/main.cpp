@@ -22,6 +22,7 @@ public:
     //Node(int n = 0,Node *l = NULL,Node *r = NULL,Node *p = NULL) : n(n),left(l),right(r),parent(p) {};
     int n;
     int color = black;  //红黑树，红为0，黑为1
+    int size = 1;
     Node *parent;
     Node *left;
     Node *right;
@@ -30,7 +31,11 @@ public:
 class RB
 {
 public:
-    //BiSearchTree() = default;
+    RB()
+    {
+        nil = new Node();
+        nil->size = 0;
+    }
     
     Node *root = NULL;
     Node *nil = NULL;//哨兵节点
@@ -47,9 +52,42 @@ public:
     Node *tree_minium(Node *x);//求最小数
     void rb_delete(Node *z);//删除节点
     void rb_delete_fixup(Node *x);//保持删除后红黑性质
-    
+    Node *os_select(Node *x, int i);
+    int os_rank(Node *x);
     
 };
+
+Node* RB::os_select(Node *x, int i)
+{
+    int r = x->left->size +1;
+    if(i == r)
+    {
+        return x;
+    }
+    else if(i<r)
+    {
+        return os_select(x->left, i);
+    }
+    else
+    {
+        return os_select(x->right, i);
+    }
+}
+
+int RB::os_rank(Node *x)
+{
+    int r = x->left->size+1;
+    Node *y = new Node();
+    while(y != root)
+    {
+        if(y == y->parent->right)
+        {
+            r = r + y->parent->left->size + 1;
+        }
+        y = y->parent;
+    }
+    return r;
+}
 
 void RB::inOrder_TreeWalk(Node *x)
 {
@@ -119,6 +157,8 @@ void RB::left_rotate(Node *x)
     {
         x->parent->right = y;
     }
+    y->size = x->size;
+    x->size = x->left->size + x->right->size + 1;
 }
 
 void RB::right_rotate(Node *x)
@@ -143,6 +183,8 @@ void RB::right_rotate(Node *x)
     {
         x->parent->right = y;
     }
+    y->size = x->size;
+    x->size = x->left->size + x->right->size + 1;
 }
 
 void RB::rb_insert(Node *z)
@@ -152,6 +194,7 @@ void RB::rb_insert(Node *z)
     z->left = NULL;
     z->right = NULL;
     z->parent = NULL;
+    z->size = 1;
     Node *y = NULL;
     Node *x = root;
     while(x != nil)
