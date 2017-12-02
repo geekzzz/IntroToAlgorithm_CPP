@@ -1,4 +1,4 @@
-//二叉搜索树
+//红黑树，根据clrs伪代码实现
 //
 #include <iostream>
 #include <vector>
