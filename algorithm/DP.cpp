@@ -12,12 +12,12 @@ using namespace std;
 
 int p[11] = {0,1,5,8,9,10,17,17,20,24,30};
 /*
-int max(int a ,int b)
-{
-    int t = a>=b ? a:b;
-    return t;
-}
-*/
+ int max(int a ,int b)
+ {
+ int t = a>=b ? a:b;
+ return t;
+ }
+ */
 int cut_rod(int n)
 {
     if(n == 0)
