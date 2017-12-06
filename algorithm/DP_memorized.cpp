@@ -1,4 +1,4 @@
-//动态规划算法
+//动态规划算法,使用memorized记录的方法
 //
 #include <iostream>
 #include <vector>
