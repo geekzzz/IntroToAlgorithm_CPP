@@ -1,21 +1,27 @@
 #include <iostream>
 #include <vector>
+#include <map>
+#include <unordered_map>
 using namespace std;
 
 int main()
 {
-	int a[5] = {1,2,3,4,5};
-	vector<int> nums(a,a+5);
-	for (int i  = 0;i < 2;i++)
+	int a[5] = {1,1,2,2,5};
+	vector<int> nums(a, a + 5);
+	map<int, int> m;
+	for (auto it = nums.begin(); it < nums.end(); it++)
 	{
-		int t = *(nums.end() - 1);
-		nums.erase(nums.end()-1);
-		nums.insert(nums.begin(), t);
+		auto s = m.find(*it);
+		if (s != m.end())
+		{
+			m.erase(s);
+		}
+		else
+		{
+			++m[*it];
+		}
 	}
-	for (auto it = nums.begin(); it != nums.end(); it++)
-	{
-		cout << *it << endl;
-	}
+	cout << m.size() << "   " << m.begin()->first << m.begin()->second;
 	system("pause");
 	return 0;
 }
