@@ -6,22 +6,28 @@ using namespace std;
 
 int main()
 {
-	int a[5] = {1,1,2,2,5};
-	vector<int> nums(a, a + 5);
-	map<int, int> m;
-	for (auto it = nums.begin(); it < nums.end(); it++)
+	int a[7] = {9,9};
+	vector<int> digits(a, a + 2);
+	vector<int> ans;
+	ans.resize(digits.size());
+	int c = 1;
+	for (int i = digits.size() - 1; i >= 0; --i)
 	{
-		auto s = m.find(*it);
-		if (s != m.end())
+		if (c == 0)
 		{
-			m.erase(s);
+			ans[i] = digits[i];
 		}
-		else
-		{
-			++m[*it];
-		}
+		int t = digits[i] + c;
+		c = t / 10;
+		ans[i] = t % 10;
 	}
-	cout << m.size() << "   " << m.begin()->first << m.begin()->second;
+	if (c == 1)
+	{
+		ans.insert(ans.begin(), 1);
+	}
+
+	
+	cout << "      ";
 	system("pause");
 	return 0;
 }
