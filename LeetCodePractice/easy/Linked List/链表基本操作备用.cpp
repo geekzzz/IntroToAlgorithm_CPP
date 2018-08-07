@@ -12,8 +12,17 @@ struct ListNode {
 	ListNode *next;
 	ListNode(int x) : val(x), next(NULL) {}
 };
+
+
+void deleteNode(ListNode* node);
+void addNode(ListNode *head, int val);
+void printList(ListNode* head);
+ListNode* findNode(ListNode* head, int val);
+ListNode* ReverseList(ListNode* head);
+
 //注意这个操作删除最后一个节点会引起倒数第二个节点野指针
-void deleteNode(ListNode* node) {
+void deleteNode(ListNode* node)
+{
 
 	if (node->next == NULL)
 	{
@@ -41,12 +50,12 @@ void addNode(ListNode *head, int val)
 void printList(ListNode* head)
 {
 	auto p = head;
-	while (p->next != NULL)
+	while (p)
 	{
 		cout << p->val << "->";
 		p = p->next;
 	}
-	cout << p->val << endl;
+	cout << endl;
 }
 
 ListNode* findNode(ListNode* head, int val)
@@ -60,24 +69,49 @@ ListNode* findNode(ListNode* head, int val)
 		}
 		p = p->next;
 	}
+	return p;
+}
+ListNode* ReverseList(ListNode* head)
+{
+	ListNode* pre = NULL;
+	ListNode* next = NULL;
+	while (head)
+	{
+		next = head->next;
+		head->next = pre;
+		pre = head;
+		head = next;
+	}
+	return pre;
 }
 
-void deleteNode(ListNode* node);
+bool hasCycle(ListNode *head) {
+	if (head == NULL)
+		return false;
+	auto p = head->next;
+	while (p)
+	{
+		if (p == head)
+			return true;
+		p = p->next;
+	}
+	return false;
+}
 
 int main()
 {
-	ListNode *head = new ListNode(1000);
-	for (int i = 0; i < 10; ++i)
+	ListNode *head = new ListNode(1);
+	for (int i = 2; i < 6; ++i)
 	{
 		addNode(head, i);
 	}
-	auto x = findNode(head, -1);
-	cout << x->val << "ffff" << endl;
-	printList(head);
-	deleteNode(findNode(head, 8));
-	printList(head);
-
+	//findNode(head, 5)->next = head;
+	//printList(head);
+	head = NULL;
+	cout << hasCycle(head);
+	//printList(reverseList(head));
 	system("pause");
 	return 0;
 }
+
 
