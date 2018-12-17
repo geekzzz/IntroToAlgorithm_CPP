@@ -35,7 +35,10 @@ String & String::operator = (const char * s)
 String & String::operator = (const String & s)
 {
 	if (this == &s)
+	{
+		cout << "相等" << endl;
 		return *this;
+	}
 	delete[]str;
 	str = nullptr;
 
@@ -61,6 +64,10 @@ int main()
 	s3 = s2 = s;
 
 	cout << s.c_str() << "  " << s2.c_str() << "  " << s3.c_str() << endl;
+
+	String s4;
+	s4 = s = s;//注意相同类检测到后，直接return this
+	cout << s.c_str() << s4.c_str() << endl;
 
 	system("pause");
 	return 0;
