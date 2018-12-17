@@ -32,7 +32,8 @@ String & String::operator = (const char * s)
 		str = NULL;
 	return *this;
 }
-String & String::operator = (const String & s)
+
+String & String::operator = (const String & s)//再次重载=号，实现深拷贝
 {
 	if (this == &s)
 	{
@@ -46,6 +47,7 @@ String & String::operator = (const String & s)
 	strcpy(str, s.str);
 	return *this;
 }
+
 String::~String()
 {
 	if (str)
