@@ -17,8 +17,24 @@ public:
 	const char * c_str() const { return str; };
 	String & operator = (const char* s);
 	String & operator = (const String & s);
+	String::String(String & s);
 	~String();
 };
+
+
+String::String(String & s)//重载复制构造函数满足深拷贝，防止意外情况
+{
+	if (s.str)
+	{
+		str = new char[strlen(s.str) + 1];
+		strcpy(str, s.str);
+	}
+	else
+	{
+		str = NULL;
+	}
+}
+
 String & String::operator = (const char * s)
 //重载"="以使得 obj = "hello"能够成立
 {
