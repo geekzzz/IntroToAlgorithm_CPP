@@ -2,3 +2,4 @@ isalnum 判断是否为字母或数字
 toupper 大小写字母全部转大写
 to_string 转string
 reverse(.begin(),.end()) 反转
+string 类 find_first_not_of 以及find_last_of   以及 find_first_of
