@@ -1,0 +1,7 @@
+异或可以用来交换int a和int b的值：
+a = a ^ b;
+b = b ^ a;
+a = a ^ b;
+
+可以用来记录二维数组等是否已经访问，防止再次访问：m[x][y] ^= 256;
+参考：https://leetcode.com/problems/word-search/discuss/27658/Accepted-very-short-Java-solution.-No-additional-space.
