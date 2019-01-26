@@ -14,3 +14,7 @@ abs 返回绝对值stdlib.h math.h   \\abs(INT_MIN) 等于 INT_MAX + 1 注意特殊情况
 labs long类型的abs
 
 int sum = accumulate(vec.begin() , vec.end() , 42);  #include<numeric> 头两个形参指定要累加的元素范围，第三个形参则是累加的初值。string sum = accumulate(v.begin() , v.end() , string(" "));这个函数调用的效果是：从空字符串开始，把vec里的每个元素连接成一个字符串。
+
+fill(vec.begin(), vec.end(), val); //原来容器中每个元素被重置为val,给出开始和结束，然后中间全部填val    #include<algorithm>
+
+fill_n(vec.begin, 10, val); //从开始迭代器开始，添加n个val
