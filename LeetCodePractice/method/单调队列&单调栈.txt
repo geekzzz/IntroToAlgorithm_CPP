@@ -18,3 +18,8 @@ max: report the max element in queue;O(1)
 It takes only O(n) time to process a N-size sliding window minimum/maximum problem.
 
 Note: different from a priority queue (which takes O(nlogk) to solve this problem), it doesn't pop the max element: It pops the first element (in original order) in queue.
+
+
+
+单调栈：
+参考lc 84，lc 85分别是一维和二维的情况。
