@@ -18,3 +18,5 @@ int sum = accumulate(vec.begin() , vec.end() , 42);  #include<numeric> Í·Á½¸öĞÎ²
 fill(vec.begin(), vec.end(), val); //Ô­À´ÈİÆ÷ÖĞÃ¿¸öÔªËØ±»ÖØÖÃÎªval,¸ø³ö¿ªÊ¼ºÍ½áÊø£¬È»ºóÖĞ¼äÈ«²¿Ìîval    #include<algorithm>
 
 fill_n(vec.begin, 10, val); //´Ó¿ªÊ¼µü´úÆ÷¿ªÊ¼£¬Ìí¼Ón¸öval
+
+nth_element(a+l,a+k,a+r) // #include<algorithm> aÕâ¸öÊı×éÖĞÇø¼ä(l,r)ÄÚµÄµÚk´óµÄÔªËØ´¦ÔÚµÚk¸öÎ»ÖÃÉÏ(Ïà¶ÔÎ»ÖÃ)
