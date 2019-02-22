@@ -1,0 +1,26 @@
+#include <queue>
+#include <functional>
+
+priority_queue<int, vector<int>, greater<int>> pq;//最小堆简单的实现方法
+priority_queue<int, vector<int>, less<int>> pq;//最大堆
+priority_queue<int> pq;//默认最大堆
+
+/*
+复杂的数据结构比较用这个
+*/
+
+
+struct node
+{
+	int idx;
+	string h;
+};
+class cmp//仿函数，结合stl用，解决传多个参问题
+{
+	bool operator()(node a, node b)
+	{
+		return a.idx > b.idx;
+	}
+};
+
+priority_queue<node, vector<node>, cmp> pq;//最小堆，最大堆把cmp中的 > 改成  <
