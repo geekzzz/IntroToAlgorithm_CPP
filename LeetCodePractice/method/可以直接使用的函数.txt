@@ -6,7 +6,7 @@ to_string 转string
 
 reverse(.begin(),.end()) 反转
 
-string 类 find_first_not_of 以及find_last_of   以及 find_first_of
+string 类 find_first_not_of 以及find_last_of   以及 find_first_of   substr(i,j)返回从i开始长度为j的字符串
 
 unique ,unique的作用是“去掉”容器中相邻元素的重复元素（不一定要求数组有序），它会把重复的元素添加到容器末尾（所以数组大小并没有改变），而返回值是去重之后的尾地址。例如：unique(res.begin(), res.end())
 
