@@ -1,0 +1,1 @@
+对Interval.start进行排序，然后放入vector中，比较result中的end和当前遍历到的interval的start的值，决定直接push_back还是修改end。
