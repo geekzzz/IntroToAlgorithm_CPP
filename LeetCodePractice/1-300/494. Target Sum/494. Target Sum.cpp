@@ -41,3 +41,29 @@ Note that the above formula has proved that target + sum(nums) must be even
 然后就可以转化为和 LC 416. Partition Equal Subset Sum 问题类似的问题
 */
 
+class Solution {
+public:
+	int findTargetSumWays(vector<int>& nums, int S) {
+		int n = nums.size();
+		int sum = 0;
+		for (auto x : nums)
+			sum += x;
+		if (sum < S)
+			return 0;
+		sum += S;
+		if (sum % 2 > 0)
+			return 0;
+		sum /= 2;
+		vector<int> dp(sum + 1, 0);//注意01背包问题可以优化为1维的情况
+		dp[0] = 1;
+
+		for (int i = 0; i < n; ++i)
+		{
+			for (int j = sum; j >= nums[i]; --j)//注意优化以后这里是从后往前扫描
+			{
+				dp[j] = dp[j] + dp[j - nums[i]];
+			}
+		}
+		return dp[sum];
+	}
+};
