@@ -1,41 +1,50 @@
+//把nsum 包括4sum问题转化为two sum问题，然后用begin和end 两个指针来解决
 class Solution {
 public:
 	vector<vector<int>> fourSum(vector<int>& nums, int target) {
+		sort(nums.begin(), nums.end());//注意要sort
+		return NSum(nums, 0, nums.size() - 1, target, 4);
+	}
+	vector<vector<int>> NSum(vector<int>&nums, int start, int end, int target, int N) {
 		vector<vector<int>> result;
-		int n = nums.size();
-		if (n < 4)
+		if (end - start + 1 < N || nums[start] * N > target || nums[end] * N < target)
 			return result;
-		sort(nums.begin(), nums.end());
-		for (int i = 0; i< n - 3; ++i)
+		if (N == 2)
+			return twoSum(nums, start, end, target);
+		for (int i = start; i <end; i++)
 		{
-			if (i > 0 && nums[i - 1] == nums[i]) continue;
-			if (nums[i] + nums[i + 1] + nums[i + 2] + nums[i + 3] > target) break; \\注意这行
-			if (nums[i] + nums[n - 1] + nums[n - 2] + nums[n - 3] < target) continue; \\注意这行
-			for (int j = i + 1; j < n - 2; ++j)
+			if (i == start || nums[i] != nums[i - 1])//跳过相同的值
 			{
-				if (j > i + 1 && nums[j - 1] == nums[j]) continue;
-				if (nums[i] + nums[j] + nums[j + 1] + nums[j + 2] > target) break;\\注意这行
-				if (nums[i] + nums[j] + nums[n - 2] + nums[n - 1] < target) continue; \\注意这行
-				int left = j + 1;
-				int right = n - 1;
-				while (left < right)
+				int select = nums[i];
+				vector<vector<int>> tmp = NSum(nums, i + 1, end, target - select, N - 1);
+				for (auto x : tmp)
 				{
-					int sum = nums[i] + nums[j] + nums[left] + nums[right];
-					if (sum >target)
-						right--;
-					else if (sum < target)
-						left++;
-					else
-					{
-						result.push_back(vector<int> {nums[i], nums[j], nums[left], nums[right]});
-						left++; \\注意这行
-						right--; \\注意这行
-						while (left < right && nums[left] == nums[left - 1])
-							left++;
-						while (left < right && nums[right] == nums[right + 1])
-							right--;
-					}
+					x.push_back(select);
+					result.push_back(x);
 				}
+			}
+		}
+		return result;
+	}
+	vector<vector<int>> twoSum(vector<int>&nums, int start, int end, int target)
+	{
+		vector<vector<int>> result;
+		while (start < end)
+		{
+			if (nums[start] + nums[end] > target)
+				end--;
+			else if (nums[start] + nums[end] < target)
+				start++;
+			else
+			{
+				vector<int> tmp;
+				tmp.push_back(nums[start]);
+				tmp.push_back(nums[end]);
+				result.push_back(tmp);
+				while (start < end - 1 && nums[start] == nums[start + 1]) start++;
+				while (start + 1 < end && nums[end] == nums[end - 1]) end--;
+				start++;
+				end--;
 			}
 		}
 		return result;
