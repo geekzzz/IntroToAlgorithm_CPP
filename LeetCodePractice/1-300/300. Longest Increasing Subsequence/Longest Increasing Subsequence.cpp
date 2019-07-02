@@ -24,3 +24,41 @@ public:
 		return maxL;
 	}
 };
+
+
+
+//二分法，nlogn复杂度，推荐
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        if(!n)
+            return 0;
+        vector<int> tails(n,0);
+        int size = 0;
+        for(auto x : nums)
+        {
+            
+            int i = bisearch(tails,0,size,x);
+            tails[i] = x;
+            if(size == i)
+                size++;
+        }
+        return size;
+    }
+    int bisearch(vector<int> v,int low ,int high,int val)
+    {
+        while(low < high)
+        {
+            int mid = (high + low)/2;
+            if(v[mid] == val)
+                return mid;
+            else if(v[mid] > val)
+                high = mid;
+            else
+                low = mid + 1;
+        }
+        return low;
+    }
+};
+
