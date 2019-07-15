@@ -67,3 +67,35 @@ public:
 		return dp[sum];
 	}
 };
+
+
+int findTargetSumWays(vector<int>& nums, int S) {
+	int n = nums.size();
+	int sum = 0;
+	for (auto x : nums)
+		sum += x;
+	int res;
+	if (sum < S)
+		return 0;
+	sum = sum + S;
+	if (sum % 2)
+		return 0;
+	sum /= 2;
+	res = targetsum(nums,sum );
+	return sum;
+}
+int targetsum(vector<int>& nums, int sum)
+{
+	// sort(nums.begin(),nums.end());
+	// reverse(nums.begin(),nums.end());
+	vector<int> dp(sum + 1, 0);
+	dp[0] = 1;
+	for (int i = 0; i < nums.size(); ++i)
+	{
+		for (int j = sum; j >= nums[i]; --j)
+		{
+			dp[j] = dp[j] + dp[j - nums[i]];
+		}
+	}
+	return dp[sum];
+}
