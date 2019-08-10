@@ -1,41 +1,25 @@
-//
 class Solution {
 public:
-	int arrangeCoins(int n) {
-		int h = n;
-		int l = 0;
-		while (l <= h)
-		{
-			int m = l + (h - l) / 2;
-			long long t = m*(m + 1l) / 2;//注意，这里一定要用1l,否则m*m + 1会被当成int运算溢出
-			if (t > n)
-				h = m - 1;
-			else if (t < n)
-				l = m + 1;
-			else
-				return m;
-		}
-		return h;
+	static bool cmp(const vector<int>&a, const vector<int>&b)
+	{
+		return a[1] == b[1] ? a[0] < b[0] : a[1] < b[1];
 	}
-};
-//另一种写法
-class Solution {
-public:
-	int arrangeCoins(int n) {
-		int h = n;
-		int l = 0;
-		while (l <= h)
+
+	int findMinArrowShots(vector<vector<int>>& points) {
+		sort(points.begin(), points.end(), cmp);
+		int arrow = INT_MIN;
+		int res = 0;
+		for (int i = 0; i < points.size(); ++i)
 		{
-			int m = l + (h - l) / 2;
-			long long t = m*(m + 1l) / 2;
-			if (t > n)
-				h = m - 1;
+			if (arrow != INT_MIN && points[i][0] <= arrow)
+				continue;
 			else
-				l = m + 1;
+			{
+				arrow = points[i][1];
+				res++;
+			}
 		}
-		return l - 1;
-
-
+		return res;
 
 	}
 };
