@@ -1,51 +1,64 @@
-// 快排
-
-#include <iostream>
+#include<stdio.h>
+#include<iostream>
+#include<string.h>
+#include<string>
+#include<ctype.h>
+#include<math.h>
+#include <set>
+#include <map>
 #include <vector>
-#include <limits.h>
-#include <math.h>
-
-
+#include <queue>
+#include <bitset>
+#include <stack>
+#include<algorithm>
+#include<time.h>
+#include<deque>
+#include <unordered_set>
+#include <functional>
+#include <Windows.h>
+#include <istream>
+#include <fstream>
+#include <unordered_map> 
 using namespace std;
 
-ivoid quicksorts(vector<int> &v, int l,int r)
+void quicksort(vector<int>& a, int left, int right)
 {
-    int i  = l,j = r, pivot = v[i];
-    if(i < j)
-    {
-        while(i < j)
-        {
-            while(i < j && v[j] >= pivot)
-                j--;
-            if(i < j)
-            {
-                v[i] = v[j];
-                i++;
-            }
-            
-            while(i < j && v[i] < pivot)
-                i++;
-            if(i < j)
-            {
-                v[j] = v[i];
-                j--;
-            }
-            
-        }
-        v[i] = pivot;
-        quicksorts(v, l, i - 1);
-        quicksorts(v, i + 1, r);
-    }
+	int pivot = a[left];
+	int l = left, r = right;
+	if (l < r)
+	{
+		while (l < r)
+		{
+			while (l < r &&  a[l] > pivot)
+				l++;
+			if (l < r)
+			{
+				a[r] = a[l];
+				r--;
+			}
+			while (l < r && a[r] <= pivot)
+				r--;
+			if (l < r)
+			{
+				a[l] = a[r];
+				l++;
+			}
+		}
+		a[l] = pivot;
+		quicksort(a, left, l - 1);
+		quicksort(a, l + 1, right);
+	}
 }
 
 
-int main(int argc, const char * argv[]) {
-    // insert code here...
-    vector<int> v {34,65,12,43,67,5,78,10,3,70 };
-    //QuickSort(v, 0, (int)v.size() - 1);
-    quicksorts(v, 0, (int)v.size() - 1);
-    for(auto a : v)
-        cout << a << " ";
-    return 0;
-}
 
+int main()
+{
+	vector<int> v{ 10,11,3,2,5,6,7,1,9,8,14,13,12 };
+	//bubblesort(v);
+	quicksort(v, 0, v.size() - 1);
+	for (auto x : v)
+		cout << x << " : ";
+	system("pause");
+	return 0;
+}
