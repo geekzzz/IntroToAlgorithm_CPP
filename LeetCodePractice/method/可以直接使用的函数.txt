@@ -1,3 +1,5 @@
+_gcd(int x,int y)求xy的最大公约数
+
 isalnum 判断是否为字母或数字
 
 toupper 大小写字母全部转大写
