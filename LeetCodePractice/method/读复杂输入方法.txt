@@ -1,0 +1,10 @@
+string src;
+stringstream ss(src);
+string s;
+getline(ss,s,' ');
+//istream& getline (char* s, streamsize n );
+//istream& getline (char* s, streamsize n, char delim );
+
+//作用是： 从istream中读取至多n个字符(包含结束标记符)保存在s对应的数组中。即使还没读够n个字符，
+
+//如果遇到delim 或 字数达到限制，则读取终止，delim都不会被保存进s对应的数组中。
