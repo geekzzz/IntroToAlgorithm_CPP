@@ -44,6 +44,7 @@ void print_cut_rod(int n)
 
 int  main(int argc,const char *argv[])
 {
+	cout << "1" << endl;
     cout << extended_buttom_up_cut_rod(p,7) << endl;
     print_cut_rod(7);
 }
