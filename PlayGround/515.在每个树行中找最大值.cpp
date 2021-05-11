@@ -1,7 +1,7 @@
 /*
- * @lc app=leetcode.cn id=513 lang=cpp
+ * @lc app=leetcode.cn id=515 lang=cpp
  *
- * [513] 找树左下角的值
+ * [515] 在每个树行中找最大值
  */
 
 // @lc code=start
@@ -18,31 +18,30 @@
  */
 class Solution {
 public:
-
-    int findBottomLeftValue(TreeNode* root) {
+    vector<int> largestValues(TreeNode* root) {
+        if(!root)
+            return vector<int> {};
         queue<TreeNode*> q;
         q.push(root);
-        int first = 0;
-        if(root)
-        {
-            first = root->val;
-        }
+        vector<int> res;
         while(!q.empty())
         {
             int size =  q.size();
+            int maxres = INT_MIN;
             for(int i = 0;i < size;++i)
             {
                 auto nod = q.front();
                 q.pop();
-                if(i == 0)
-                    first = nod->val;
+                maxres = max(maxres,nod->val);
+                
                 if(nod->left)
                     q.push(nod->left);
                 if(nod->right)
                     q.push(nod->right);
             }
+            res.push_back(maxres);
         }
-        return first;
+        return res;
     }
 };
 // @lc code=end
