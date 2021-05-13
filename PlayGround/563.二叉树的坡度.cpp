@@ -1,7 +1,7 @@
 /*
- * @lc app=leetcode.cn id=543 lang=cpp
+ * @lc app=leetcode.cn id=563 lang=cpp
  *
- * [543] 二叉树的直径
+ * [563] 二叉树的坡度
  */
 
 // @lc code=start
@@ -18,19 +18,19 @@
  */
 class Solution {
 public:
-    int maxres = INT_MIN;
+    int res = 0;
     int helper(TreeNode* root)
     {
         if(!root)
             return 0;
         int l = helper(root->left);
         int r = helper(root->right);
-        maxres = max(maxres,l + r );
-        return max(l + 1,r + 1 );
+        res += abs(l - r);
+        return l + r + root->val;
     }
-    int diameterOfBinaryTree(TreeNode* root) {
+    int findTilt(TreeNode* root) {
         helper(root);
-        return maxres;
+        return res;
     }
 };
 // @lc code=end
