@@ -22,7 +22,6 @@ public:
             return -1;
         }
         return left;
-
     }
 
     bool helper(vector<vector<int>>& index,  string word)
